@@ -1,7 +1,7 @@
 import sqlite3
 from Models.Event import Event
 
-con = sqlite3.connect('events.db', check_same_thread=False)
+con = sqlite3.connect('event.db', check_same_thread=False)
 
 
 class EventService:
@@ -17,7 +17,7 @@ class EventService:
                         endTime,
                         program,
                         invitees
-                        FROM events
+                        FROM event
                         WHERE id = ?"""
         
             raw_event = con.execute(query, (id,)).fetchone()
@@ -48,7 +48,7 @@ class EventService:
                         endTime,
                         program,
                         invitees
-                        FROM events"""
+                        FROM event"""
                         
             raw_events = con.execute(query).fetchall()
             for row in raw_events:
@@ -66,3 +66,60 @@ class EventService:
                 events.append(event)
                 
         return events
+    
+    def addEvent(self, event_object: Event):
+        with con:
+            sql_insert = """
+            INSERT INTO event
+            (eventName, description, location, dateId, startTime, endTime, program, invitees)
+            values(?, ?, ?, ?, ?, ?, ?, ?)"""
+
+            
+
+            con.execute(sql_insert, (
+                event_object.eventName,
+                event_object.description,
+                event_object.location,
+                event_object.dateId,
+                event_object.startTime,
+                event_object.endTime,
+                event_object.program,
+                event_object.invitees
+            ))
+    def deleteEvent(self, id):
+        with con:
+            sql_delete = """DELETE FROM event
+            WHERE id = ?"""
+            
+            raw_event = con.execute(sql_delete, (id,))
+            
+        return id
+    
+    def updateEvent(self, id, event_object: Event):
+        with con:
+            sql_update = """
+            UPDATE event
+            SET
+                eventName = ?,
+                description = ?,
+                location = ?,
+                dateId = ?,
+                startTime = ?,
+                endTime = ?,
+                program = ?,
+                invitees = ?
+            WHERE
+                id = ?
+            """
+            
+            con.execute(sql_update, (
+                event_object.eventName,
+                event_object.description,
+                event_object.location,
+                event_object.dateId,
+                event_object.startTime,
+                event_object.endTime,
+                event_object.program,
+                event_object.invitees,
+                id
+            ))

@@ -1,13 +1,13 @@
 import sqlite3
 
-con = sqlite3.connect('events.db')
+con = sqlite3.connect('event.db')
 
 class Connection:
     def createTable(self):
         with con:
             data = con.execute("""
                 select count(*)
-                from sqlite master
+                from sqlite_master
                 where
                 type='table' and name='event';
             """)
@@ -30,7 +30,7 @@ class Connection:
                         """)
                         
     def insertEventData(self):
-        sql = """INSERT INTO enevt
+        sql = """INSERT INTO event
             (eventName, description, location, dateId, startTime, endTime, program, invitees)
             values(?, ?, ?, ?, ?, ?, ?, ?)
             """

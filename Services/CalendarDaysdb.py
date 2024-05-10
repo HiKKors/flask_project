@@ -16,7 +16,7 @@ class Connection:
                 if row[0] == 0:
                     with con:
                         con.execute("""
-                            CREATE TABLE calendarDay (
+                            CREATE TABLE IF NOT EXISTS calendarDay (
                                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                                 WeekDay TEXT,
                                 DayType TEXT,
@@ -25,7 +25,7 @@ class Connection:
                         """)
                         
     def insertCalendarData(self):
-        sql = """INSERT INTO enevt
+        sql = """INSERT INTO calendarDay
             (WeekDay, DayType)
             values(?, ?)
             """

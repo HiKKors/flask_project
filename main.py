@@ -1,23 +1,17 @@
-from flask import Flask
-# from Controllers.calendarDayController import calendarDay_api
-# from Controllers.eventController import event_api
-from Models.Event import Event
-from Services.Eventdb import Connection
+# from Controllers.calendarDayController import CalendarDayController
+# if __name__ == "__main__":
+#     controller = CalendarDayController()
+#     service = controller.start()
+#     service.run(debug=True, port=3000, host="127.0.0.1")
 
 from Controllers.eventController import EventControler
-
-
-if __name__ == "__main__": 
+if __name__ == "__main__":
     controller = EventControler()
     service = controller.start()
-    service.run(debug=True, port=3000, host='127.0.0.1')
+    service.run(debug=True, port=3000, host="127.0.0.1")
 
-
-
-# app = Flask(__name__)
-
-# app.register_blueprint(calendarDay_api)
-# app.register_blueprint(event_api)
-
-# if __name__ == '__main__':
-#     app.run(debug=True, port=3000, host='127.0.0.1')
+# from Models.CalendarDays import CalendarDays
+# from Services.CalendarDaysdb import Connection
+# if __name__ == "__main__":
+#     con = Connection()
+#     con.connect()
