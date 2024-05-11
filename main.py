@@ -1,17 +1,10 @@
-# from Controllers.calendarDayController import CalendarDayController
-# if __name__ == "__main__":
-#     controller = CalendarDayController()
-#     service = controller.start()
-#     service.run(debug=True, port=3000, host="127.0.0.1")
+from application import app, api
 
-from Controllers.eventController import EventControler
-if __name__ == "__main__":
-    controller = EventControler()
-    service = controller.start()
-    service.run(debug=True, port=3000, host="127.0.0.1")
+from Controllers.calendarDayController import CalendarDayController
+from Controllers.eventController import EventControler 
 
-# from Models.CalendarDays import CalendarDays
-# from Services.CalendarDaysdb import Connection
-# if __name__ == "__main__":
-#     con = Connection()
-#     con.connect()
+if __name__ == '__main__':
+    # добавляем ресурсы
+    api.add_resource(CalendarDayController)
+    api.add_resource(EventControler)
+    app.run(debug=True, port=3000, host="127.0.0.1")

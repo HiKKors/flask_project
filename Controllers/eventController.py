@@ -1,12 +1,12 @@
+from application import app
+
 from flask import Flask, jsonify, request
-from flask_restful import Api, Resource, reqparse
+from flask_restful import Resource, reqparse
 
 from Models.Event import Event
 from Services.eventService import EventService
 
-app = Flask(__name__)
-api = Api()
-
+# связь с сервисом
 _eventService = EventService()
 
 class EventControler(Resource):
@@ -65,6 +65,3 @@ class EventControler(Resource):
 
         return jsonify({'events': _eventService.findAllEvents()})
 
-    def start(self):
-        api.init_app(app)
-        return app
