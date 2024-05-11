@@ -37,8 +37,48 @@ class CalendarDayService:
                 event = {
                     'id': row[0],
                     'WeekDay': row[1],
-                    'DatType': row[2]
+                    'DayType': row[2]
                 }
                 calendarDays.append(event)
                 
         return calendarDays
+    
+    def addCalendarDay(self, calendar_object: CalendarDays):
+        with con:
+            sql_insert = """
+            INSERT INTO calendarDay
+            (WeekDay, DayType)
+            values(?, ?)"""
+
+            
+
+            con.execute(sql_insert, (
+                calendar_object.WeekDay,
+                calendar_object.DayType
+            ))
+            
+    def deteleCalendarDay(self, id):
+        with con:
+            sql_delete = """DELETE FROM calendarDay
+            WHERE id = ?"""
+            
+            raw_calendarDay = con.execute(sql_delete, (id,))
+            
+        return id
+    
+    def updateCalendarDay(self, id, calendar_object: CalendarDays):
+        with con:
+            sql_update = """
+            UPDATE calendarDay
+            SET
+                WeekDay = ?,
+                DayType = ?
+            WHERE
+                id = ?
+            """
+            
+            con.execute(sql_update, (
+                calendar_object.WeekDay,
+                calendar_object.DayType,
+                id
+            ))

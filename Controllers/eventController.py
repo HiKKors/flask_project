@@ -49,7 +49,7 @@ class EventControler(Resource):
     @staticmethod
     @app.route('/es/v1/events/<int:id>', methods=['PUT'])
     def update_event(id):
-        request_data = request.get_json()#получаем тело запроса
+        request_data = request.get_json()
         
         event = Event()
         event.eventName = request_data['eventName']

@@ -123,3 +123,4 @@ class EventService:
                 event_object.invitees,
                 id
             ))
+        

@@ -22,14 +22,31 @@ class CalendarDayController(Resource):
     @staticmethod
     @app.route('/cds/v1/calendarDays/<int:id>', methods=['DELETE'])
     def delete_calendarDay(id):
-        pass
+        _calendarDayService.deteleCalendarDay(id)
+        return jsonify(id)
     
     @staticmethod
     @app.route('/cds/v1/calendarDays', methods=['POST'])
     def add_calendarDay():
-        pass
+        request_data = request.get_json()#получаем тело запроса
+        
+        calendarDay = CalendarDays()
+        calendarDay.WeekDay = request_data['WeekDay']
+        calendarDay.DayType = request_data['DayType']
+
+        _calendarDayService.addCalendarDay(calendarDay)
+
+        return jsonify({'calendarDays': _calendarDayService.findAllCalendarDays()})
     
     @staticmethod
     @app.route('/cds/v1/calendarDays/<int:id>', methods=['PUT'])
     def update_calendarDay(id):
-        pass
+        request_data = request.get_json()
+        
+        calendarDay = CalendarDays()
+        calendarDay.WeekDay = request_data['WeekDay']
+        calendarDay.DayType = request_data['DayType']
+
+        _calendarDayService.updateCalendarDay(id, calendarDay)
+
+        return jsonify({'calendarDays': _calendarDayService.findAllCalendarDays()})
