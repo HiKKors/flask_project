@@ -12,13 +12,13 @@ _eventService = EventService()
 class EventControler(Resource):
     @staticmethod
     @app.route('/es/v1/events', methods=['GET'])
+    def get_events():
+        return jsonify({'events': _eventService.findAllEvents()})
+    
     @app.route('/es/v1/events/<int:event_id>', methods=['GET'])
-    def get_events(event_id = None):
-        if event_id != None:
-            event = _eventService.findEvent(event_id)
-            return jsonify(event.serialize())
-        else:
-            return jsonify({'events': _eventService.findAllEvents()})
+    def get_event(event_id):
+        event = _eventService.findEvent(event_id)
+        return jsonify(event.serialize())
         
     @staticmethod
     @app.route('/es/v1/events/<int:id>', methods=['DELETE'])
