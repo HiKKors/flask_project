@@ -1,0 +1,149 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module Controllers.calendarDayController</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="Controllers.html"><font color="#ffffff">Controllers</font></a>.calendarDayController</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5C2%D0%BA%202%D1%81%5C%D1%82%D0%B5%D1%85%D0%BD%D0%BE%D0%BB%D0%BE%D0%B3%D0%B8%D1%8F%20%D0%BF%D1%80%D0%BE%D0%B3%D1%80%D0%B0%D0%BC%D0%BC%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F%5C%D0%BB2%5Cflask_project%5Ccontrollers%5Ccalendardaycontroller.py">c:\2к 2с\технология программирования\л2\flask_project\controllers\calendardaycontroller.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="flask_restful.reqparse.html">flask_restful.reqparse</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="flask_restful.html#Resource">flask_restful.Resource</a>(<a href="flask.views.html#MethodView">flask.views.MethodView</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="Controllers.calendarDayController.html#CalendarDayController">CalendarDayController</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="CalendarDayController">class <strong>CalendarDayController</strong></a>(<a href="flask_restful.html#Resource">flask_restful.Resource</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>Класс&nbsp;контроллер&nbsp;таблицы&nbsp;calendarDay<br>
+Содержит&nbsp;методы&nbsp;для&nbsp;каждой&nbsp;CRUD&nbsp;операции<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="Controllers.calendarDayController.html#CalendarDayController">CalendarDayController</a></dd>
+<dd><a href="flask_restful.html#Resource">flask_restful.Resource</a></dd>
+<dd><a href="flask.views.html#MethodView">flask.views.MethodView</a></dd>
+<dd><a href="flask.views.html#View">flask.views.View</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="CalendarDayController-get_calendarDay"><strong>get_calendarDay</strong></a>(calendar_day_id=None)</dt><dd><tt>Параметры:&nbsp;calendar_day_id<br>
+&nbsp;<br>
+GET-операция<br>
+Запрашивает&nbsp;у&nbsp;сервиса&nbsp;и&nbsp;возвращает&nbsp;объект&nbsp;со&nbsp;одной&nbsp;записью&nbsp;с&nbsp;id&nbsp;=&nbsp;calendar_day_id</tt></dd></dl>
+
+<hr>
+Static methods defined here:<br>
+<dl><dt><a name="CalendarDayController-add_calendarDay"><strong>add_calendarDay</strong></a>()</dt><dd><tt>POST-операция<br>
+Добавляет&nbsp;новую&nbsp;запись&nbsp;в&nbsp;таблицу<br>
+&nbsp;<br>
+Возвращает:&nbsp;все&nbsp;записи,&nbsp;вместе&nbsp;с&nbsp;новой,&nbsp;в&nbsp;формате&nbsp;json</tt></dd></dl>
+
+<dl><dt><a name="CalendarDayController-delete_calendarDay"><strong>delete_calendarDay</strong></a>(id)</dt><dd><tt>Параметры:&nbsp;id<br>
+&nbsp;<br>
+DELETE-операция<br>
+Запрашивает&nbsp;у&nbsp;сервиса&nbsp;и&nbsp;возвращает&nbsp;id&nbsp;удаленного&nbsp;дня</tt></dd></dl>
+
+<dl><dt><a name="CalendarDayController-get_calendarDays"><strong>get_calendarDays</strong></a>()</dt><dd><tt>GET-операция<br>
+Запрашивает&nbsp;у&nbsp;сервиса&nbsp;и&nbsp;возвращает&nbsp;объект&nbsp;со&nbsp;всеми&nbsp;записями&nbsp;в&nbsp;таблице&nbsp;calendarDay</tt></dd></dl>
+
+<dl><dt><a name="CalendarDayController-update_calendarDay"><strong>update_calendarDay</strong></a>(id)</dt><dd><tt>Параметры:&nbsp;id<br>
+&nbsp;<br>
+PUT-операция<br>
+Обновляет&nbsp;данные&nbsp;для&nbsp;записи&nbsp;с&nbsp;введенным&nbsp;id&nbsp;<br>
+&nbsp;<br>
+Возвращает:&nbsp;Список&nbsp;всех&nbsp;записей</tt></dd></dl>
+
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>__annotations__</strong> = {}</dl>
+
+<hr>
+Methods inherited from <a href="flask_restful.html#Resource">flask_restful.Resource</a>:<br>
+<dl><dt><a name="CalendarDayController-dispatch_request"><strong>dispatch_request</strong></a>(self, *args, **kwargs)</dt><dd><tt>The&nbsp;actual&nbsp;view&nbsp;function&nbsp;behavior.&nbsp;Subclasses&nbsp;must&nbsp;override<br>
+this&nbsp;and&nbsp;return&nbsp;a&nbsp;valid&nbsp;response.&nbsp;Any&nbsp;variables&nbsp;from&nbsp;the&nbsp;URL<br>
+rule&nbsp;are&nbsp;passed&nbsp;as&nbsp;keyword&nbsp;arguments.</tt></dd></dl>
+
+<hr>
+Data and other attributes inherited from <a href="flask_restful.html#Resource">flask_restful.Resource</a>:<br>
+<dl><dt><strong>method_decorators</strong> = []</dl>
+
+<dl><dt><strong>representations</strong> = None</dl>
+
+<hr>
+Class methods inherited from <a href="flask.views.html#MethodView">flask.views.MethodView</a>:<br>
+<dl><dt><a name="CalendarDayController-__init_subclass__"><strong>__init_subclass__</strong></a>(**kwargs: 't.Any') -&gt; 'None'<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt><dd><tt>This&nbsp;method&nbsp;is&nbsp;called&nbsp;when&nbsp;a&nbsp;class&nbsp;is&nbsp;subclassed.<br>
+&nbsp;<br>
+The&nbsp;default&nbsp;implementation&nbsp;does&nbsp;nothing.&nbsp;It&nbsp;may&nbsp;be<br>
+overridden&nbsp;to&nbsp;extend&nbsp;subclasses.</tt></dd></dl>
+
+<hr>
+Class methods inherited from <a href="flask.views.html#View">flask.views.View</a>:<br>
+<dl><dt><a name="CalendarDayController-as_view"><strong>as_view</strong></a>(name: 'str', *class_args: 't.Any', **class_kwargs: 't.Any') -&gt; 'ft.RouteCallable'<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt><dd><tt>Convert&nbsp;the&nbsp;class&nbsp;into&nbsp;a&nbsp;view&nbsp;function&nbsp;that&nbsp;can&nbsp;be&nbsp;registered<br>
+for&nbsp;a&nbsp;route.<br>
+&nbsp;<br>
+By&nbsp;default,&nbsp;the&nbsp;generated&nbsp;view&nbsp;will&nbsp;create&nbsp;a&nbsp;new&nbsp;instance&nbsp;of&nbsp;the<br>
+view&nbsp;class&nbsp;for&nbsp;every&nbsp;request&nbsp;and&nbsp;call&nbsp;its<br>
+:meth:`dispatch_request`&nbsp;method.&nbsp;If&nbsp;the&nbsp;view&nbsp;class&nbsp;sets<br>
+:attr:`init_every_request`&nbsp;to&nbsp;``False``,&nbsp;the&nbsp;same&nbsp;instance&nbsp;will<br>
+be&nbsp;used&nbsp;for&nbsp;every&nbsp;request.<br>
+&nbsp;<br>
+Except&nbsp;for&nbsp;``name``,&nbsp;all&nbsp;other&nbsp;arguments&nbsp;passed&nbsp;to&nbsp;this&nbsp;method<br>
+are&nbsp;forwarded&nbsp;to&nbsp;the&nbsp;view&nbsp;class&nbsp;``__init__``&nbsp;method.<br>
+&nbsp;<br>
+..&nbsp;versionchanged::&nbsp;2.2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Added&nbsp;the&nbsp;``init_every_request``&nbsp;class&nbsp;attribute.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="flask.views.html#View">flask.views.View</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="flask.views.html#View">flask.views.View</a>:<br>
+<dl><dt><strong>decorators</strong> = []</dl>
+
+<dl><dt><strong>init_every_request</strong> = True</dl>
+
+<dl><dt><strong>methods</strong> = None</dl>
+
+<dl><dt><strong>provide_automatic_options</strong> = None</dl>
+
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>app</strong> = &lt;Flask 'application'&gt;<br>
+<strong>request</strong> = &lt;LocalProxy unbound&gt;</td></tr></table>
+</body></html>

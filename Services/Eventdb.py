@@ -4,6 +4,7 @@ con = sqlite3.connect('event.db')
 
 class Connection:
     def createTable(self):
+        """Создает таблицу мероприятий"""
         with con:
             data = con.execute("""
                 select count(*)
@@ -30,11 +31,13 @@ class Connection:
                         """)
                         
     def insertEventData(self):
+        """Заполняет тестовыми данными"""
         sql = """INSERT INTO event
             (eventName, description, location, dateId, startTime, endTime, program, invitees)
             values(?, ?, ?, ?, ?, ?, ?, ?)
             """
-            
+        
+        """тестовые данные"""
         data = [
             ('День космонавтики', 
              'Праздник Дня Космонавтики: Откройте Вселенную вместе с нами! Присоединяйтесь к увлекательным мероприятиям, посвященным освоению космоса и достижениям человечества в космических исследованиях.', 
@@ -55,6 +58,7 @@ class Connection:
         ]
 
         with con:
+            """соединение данных и запроса"""
             con.executemany(sql, data)
             
             

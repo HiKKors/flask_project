@@ -4,6 +4,7 @@ con =  sqlite3.connect('calendar_days.db')
 
 class Connection:
     def createTable(self):
+        """Создает таблицу calendarDay"""
         with con:
             data = con.execute("""
                 select count(*)
@@ -25,6 +26,7 @@ class Connection:
                         """)
                         
     def insertCalendarData(self):
+        """Заполняет таблицу тестовыми данными"""
         sql = """INSERT INTO calendarDay
             (WeekDay, DayType)
             values(?, ?)

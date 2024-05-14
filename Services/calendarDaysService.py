@@ -6,6 +6,10 @@ con = sqlite3.connect('calendar_days.db', check_same_thread=False)
 
 class CalendarDayService:
     def findCalendarDay(self, id):
+        """
+        Параметры: id нужного дня
+        Возвращает: данные о дне с введенным id (формат: json)
+        """
         with con:
             query = """SELECT 
                         id,
@@ -13,7 +17,8 @@ class CalendarDayService:
                         DayType
                         FROM calendarDay
                         WHERE id = ?"""
-        
+
+            """Получаем одну запись"""
             raw_day = con.execute(query, (id,)).fetchone()
             calendarDay = CalendarDays()
             
@@ -24,6 +29,15 @@ class CalendarDayService:
         return calendarDay
         
     def findAllCalendarDays(self):
+        """
+        Возвращает: все записи из таблицы calendarDay в формате json
+        
+        Создается список со всеми днями
+        С помощью fetchall получаем все записи из таблицы
+        Проходимся циклом по полученному списку
+        Создаем объект с данными об одном дне
+        Добавляем в список со всеми записями 
+        """
         calendarDays = []
         with con:
             query = """SELECT

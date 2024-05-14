@@ -3,9 +3,13 @@ from Models.Event import Event
 
 con = sqlite3.connect('event.db', check_same_thread=False)
 
-
 class EventService:
     def findEvent(self, id):
+        """
+        Параметры: id нужного мероприятия
+        Возвращает: мероприятие с введенным id (формат: json)
+        """
+        
         with con:
             query = """SELECT 
                         id,
@@ -19,8 +23,9 @@ class EventService:
                         invitees
                         FROM event
                         WHERE id = ?"""
-        
-            raw_event = con.execute(query, (id,)).fetchone()
+
+            """Получаем одну запись"""
+            raw_event = con.execute(query, (id,)).fetchone() 
             event = Event()
             
             event.id = raw_event[0]
@@ -36,6 +41,15 @@ class EventService:
         return event
         
     def findAllEvents(self):
+        """
+        Возвращает: Все записи из таблицы event в формате json
+        
+        Создается список со всеми мероприятиями
+        С помощью fetchall получаем все записи из таблицы
+        Проходимся циклом по полученному списку
+        Создаем объект с данными об одном мероприятии
+        Добавляем объект в список со всеми записями 
+        """
         events = []
         with con:
             query = """SELECT
@@ -49,8 +63,9 @@ class EventService:
                         program,
                         invitees
                         FROM event"""
-                        
+            
             raw_events = con.execute(query).fetchall()
+            
             for row in raw_events:
                 event = {
                     'id': row[0],
@@ -64,17 +79,16 @@ class EventService:
                     'invitees': row[8]
                 }
                 events.append(event)
-                
+        
         return events
     
     def addEvent(self, event_object: Event):
+        """Параметры: ожидаемый тип данных"""
         with con:
             sql_insert = """
             INSERT INTO event
             (eventName, description, location, dateId, startTime, endTime, program, invitees)
             values(?, ?, ?, ?, ?, ?, ?, ?)"""
-
-            
 
             con.execute(sql_insert, (
                 event_object.eventName,
@@ -86,7 +100,15 @@ class EventService:
                 event_object.program,
                 event_object.invitees
             ))
+            
     def deleteEvent(self, id):
+        """
+        Параметры: id мероприятия, которое хотим удалить
+        Возвращает: id удаленного мероприятия
+        
+        
+        в con.execute кроме всех полей прописываем id, так как для изменения записи нужны все поля
+        """
         with con:
             sql_delete = """DELETE FROM event
             WHERE id = ?"""
@@ -111,7 +133,6 @@ class EventService:
             WHERE
                 id = ?
             """
-            
             con.execute(sql_update, (
                 event_object.eventName,
                 event_object.description,

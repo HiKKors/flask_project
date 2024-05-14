@@ -1,4 +1,9 @@
 class Event:
+    """
+    Класс модели мероприятий
+    
+    Создаем переменные с дефолтным значением - None
+    """
     id = None
     eventName = None
     description = None
@@ -10,6 +15,9 @@ class Event:
     invitees = None
     
     def __init__(self):
+        """
+        Затем инициализируем их
+        """
         self.id = Event.id
         self.eventName = Event.eventName
         self.description = Event.description
@@ -21,6 +29,10 @@ class Event:
         self.invitees = Event.invitees
         
     def serialize(self):
+        """
+        Метод сериализации объекта
+        Возвращает объект типа json
+        """
         return {
             'id': self.id,
             'eventName': self.eventName,
