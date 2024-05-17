@@ -1,6 +1,8 @@
 import sqlite3
 from Models.CalendarDays import CalendarDays
 
+from Exceptions.calendarDay_not_found_exception import CalendarDayNotFoundException
+
 con = sqlite3.connect('calendar_days.db', check_same_thread=False)
 
 
@@ -20,6 +22,9 @@ class CalendarDayService:
 
             """Получаем одну запись"""
             raw_day = con.execute(query, (id,)).fetchone()
+            if raw_day == None:
+                raise CalendarDayNotFoundException('В этот день нет никаких мероприятий')
+            
             calendarDay = CalendarDays()
             
             calendarDay.id = raw_day[0]
@@ -76,12 +81,18 @@ class CalendarDayService:
             sql_delete = """DELETE FROM calendarDay
             WHERE id = ?"""
             
-            raw_calendarDay = con.execute(sql_delete, (id,))
+            raw_calendarDay = con.execute(sql_delete, (id,)).fetchone()
+            if raw_calendarDay == None:
+                raise CalendarDayNotFoundException(f'Даты с id {id} не найдено')
             
         return id
     
     def updateCalendarDay(self, id, calendar_object: CalendarDays):
         with con:
+            raw_calendarDay_id = con.execute("SELECT id FROM calendarDay WHERE id=?", (id,)).fetchone()
+            if raw_calendarDay_id == None:
+                raise CalendarDayNotFoundException(f'Даты с id {id} не найдено')
+            
             sql_update = """
             UPDATE calendarDay
             SET

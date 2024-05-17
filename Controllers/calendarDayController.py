@@ -1,3 +1,4 @@
+from flask import Response
 from application import app
 
 from flask import Flask, jsonify, request
@@ -5,6 +6,8 @@ from flask_restful import Resource, reqparse
 
 from Models.CalendarDays import CalendarDays
 from Services.calendarDaysService import CalendarDayService
+
+from Exceptions.calendarDay_not_found_exception import CalendarDayNotFoundException
 
 _calendarDayService = CalendarDayService()
 
@@ -30,8 +33,12 @@ class CalendarDayController(Resource):
         GET-операция
         Запрашивает у сервиса и возвращает объект со одной записью с id = calendar_day_id
         """
-        calendar_day = _calendarDayService.findCalendarDay(calendar_day_id)
-        return jsonify(calendar_day.serialize())
+        try:
+            calendar_day = _calendarDayService.findCalendarDay(calendar_day_id)
+            return jsonify(calendar_day.serialize())
+        except CalendarDayNotFoundException as exp:
+            return Response(exp.message, status=404)
+        
         
     @staticmethod
     @app.route('/cds/v1/calendarDays/<int:id>', methods=['DELETE'])
@@ -42,9 +49,12 @@ class CalendarDayController(Resource):
         DELETE-операция
         Запрашивает у сервиса и возвращает id удаленного дня
         """
-        _calendarDayService.deteleCalendarDay(id)
-        return jsonify(id)
-    
+        try:
+            _calendarDayService.deteleCalendarDay(id)
+            return jsonify(id)
+        except CalendarDayNotFoundException as exp:
+            return Response(exp.message, status=404)
+        
     @staticmethod
     @app.route('/cds/v1/calendarDays', methods=['POST'])
     def add_calendarDay():
@@ -81,6 +91,8 @@ class CalendarDayController(Resource):
         calendarDay.WeekDay = request_data['WeekDay']
         calendarDay.DayType = request_data['DayType']
 
-        _calendarDayService.updateCalendarDay(id, calendarDay)
-
-        return jsonify({'calendarDays': _calendarDayService.findAllCalendarDays()})
+        try:
+            _calendarDayService.updateCalendarDay(id, calendarDay)
+            return jsonify({'calendarDays': _calendarDayService.findAllCalendarDays()})
+        except CalendarDayNotFoundException as exp:
+            return Response(exp.message, status=404)

@@ -1,6 +1,8 @@
 import sqlite3
 from Models.Event import Event
 
+from Exceptions.event_not_found_exception import EventNotFoundException
+
 con = sqlite3.connect('event.db', check_same_thread=False)
 
 class EventService:
@@ -26,6 +28,10 @@ class EventService:
 
             """Получаем одну запись"""
             raw_event = con.execute(query, (id,)).fetchone() 
+            """Если ничего не найдено вызываем ошибку"""
+            if raw_event == None:
+                raise EventNotFoundException(f'Мероприятие с id {id} не найдено')
+            
             event = Event()
             
             event.id = raw_event[0]
@@ -105,20 +111,24 @@ class EventService:
         """
         Параметры: id мероприятия, которое хотим удалить
         Возвращает: id удаленного мероприятия
-        
-        
-        в con.execute кроме всех полей прописываем id, так как для изменения записи нужны все поля
         """
         with con:
             sql_delete = """DELETE FROM event
             WHERE id = ?"""
             
-            raw_event = con.execute(sql_delete, (id,))
+            raw_event = con.execute(sql_delete, (id,)).fetchone()
+            if raw_event == None:
+                raise EventNotFoundException(f'Мероприятие с id {id} не найдено')
             
         return id
     
     def updateEvent(self, id, event_object: Event):
+        """в con.execute кроме всех полей прописываем id, так как для изменения записи нужны все поля"""
         with con:
+            raw_event_id = con.execute("""SELECT id FROM event WHERE id = ?""", (id,)).fetchone()
+            if raw_event_id == None:
+                raise EventNotFoundException(f'Мероприятие с id {id} не найдено')   
+            
             sql_update = """
             UPDATE event
             SET
@@ -133,6 +143,7 @@ class EventService:
             WHERE
                 id = ?
             """
+            
             con.execute(sql_update, (
                 event_object.eventName,
                 event_object.description,
