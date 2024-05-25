@@ -1,7 +1,7 @@
 from flask import Response
 from application import app
 
-from flask import Flask, jsonify, request
+from flask import jsonify, request
 from flask_restful import Resource, reqparse
 
 from Models.Event import Event
@@ -70,7 +70,6 @@ class EventControler(Resource):
         event.eventName = request_data['eventName']
         event.description = request_data['description']
         event.location = request_data['location']
-        event.dateId = request_data['dateId']
         event.startTime = request_data['startTime']
         event.endTime = request_data['endTime']
         event.program = request_data['program']
@@ -99,7 +98,6 @@ class EventControler(Resource):
         event.eventName = request_data['eventName']
         event.description = request_data['description']
         event.location = request_data['location']
-        event.dateId = request_data['dateId']
         event.startTime = request_data['startTime']
         event.endTime = request_data['endTime']
         event.program = request_data['program']

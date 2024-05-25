@@ -67,6 +67,7 @@ class CalendarDayController(Resource):
         request_data = request.get_json()#получаем тело запроса
         
         calendarDay = CalendarDays()
+        calendarDay.event_id = request_data['event_id']
         calendarDay.WeekDay = request_data['WeekDay']
         calendarDay.DayType = request_data['DayType']
 
@@ -88,6 +89,7 @@ class CalendarDayController(Resource):
         request_data = request.get_json()
         
         calendarDay = CalendarDays()
+        calendarDay.event_id = request_data['event_id']
         calendarDay.WeekDay = request_data['WeekDay']
         calendarDay.DayType = request_data['DayType']
 

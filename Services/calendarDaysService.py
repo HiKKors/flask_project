@@ -3,7 +3,7 @@ from Models.CalendarDays import CalendarDays
 
 from Exceptions.calendarDay_not_found_exception import CalendarDayNotFoundException
 
-con = sqlite3.connect('calendar_days.db', check_same_thread=False)
+con = sqlite3.connect('db.db', check_same_thread=False)
 
 
 class CalendarDayService:
@@ -15,6 +15,7 @@ class CalendarDayService:
         with con:
             query = """SELECT 
                         id,
+                        event_id,
                         WeekDay,
                         DayType
                         FROM calendarDay
@@ -28,8 +29,9 @@ class CalendarDayService:
             calendarDay = CalendarDays()
             
             calendarDay.id = raw_day[0]
-            calendarDay.WeekDay = raw_day[1]
-            calendarDay.DayType = raw_day[2]
+            calendarDay.event_id = raw_day[1]
+            calendarDay.WeekDay = raw_day[2]
+            calendarDay.DayType = raw_day[3]
     
         return calendarDay
         
@@ -47,6 +49,7 @@ class CalendarDayService:
         with con:
             query = """SELECT
                         id,
+                        event_id,
                         WeekDay,
                         DayType
                         FROM calendarDay"""
@@ -55,8 +58,9 @@ class CalendarDayService:
             for row in raw_day:
                 event = {
                     'id': row[0],
-                    'WeekDay': row[1],
-                    'DayType': row[2]
+                    'event_id': row[1],
+                    'WeekDay': row[2],
+                    'DayType': row[3]
                 }
                 calendarDays.append(event)
                 
@@ -66,12 +70,11 @@ class CalendarDayService:
         with con:
             sql_insert = """
             INSERT INTO calendarDay
-            (WeekDay, DayType)
-            values(?, ?)"""
-
-            
+            (event_id, WeekDay, DayType)
+            values(?, ?, ?)"""
 
             con.execute(sql_insert, (
+                calendar_object.event_id,
                 calendar_object.WeekDay,
                 calendar_object.DayType
             ))
@@ -96,6 +99,7 @@ class CalendarDayService:
             sql_update = """
             UPDATE calendarDay
             SET
+                event_id = ?,
                 WeekDay = ?,
                 DayType = ?
             WHERE
@@ -103,6 +107,7 @@ class CalendarDayService:
             """
             
             con.execute(sql_update, (
+                calendar_object.event_id,
                 calendar_object.WeekDay,
                 calendar_object.DayType,
                 id

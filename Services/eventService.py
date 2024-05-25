@@ -3,7 +3,7 @@ from Models.Event import Event
 
 from Exceptions.event_not_found_exception import EventNotFoundException
 
-con = sqlite3.connect('event.db', check_same_thread=False)
+con = sqlite3.connect('db.db', check_same_thread=False)
 
 class EventService:
     def findEvent(self, id):
@@ -18,7 +18,6 @@ class EventService:
                         eventName,
                         description,
                         location,
-                        dateId,
                         startTime,
                         endTime,
                         program,
@@ -38,11 +37,10 @@ class EventService:
             event.EventName = raw_event[1]
             event.Description = raw_event[2]
             event.Location = raw_event[3]
-            event.DateId = raw_event[4]
-            event.StartTime = raw_event[5]
-            event.EndTime = raw_event[6]
-            event.Program = raw_event[7]
-            event.Invitees = raw_event[8]
+            event.StartTime = raw_event[4]
+            event.EndTime = raw_event[5]
+            event.Program = raw_event[6]
+            event.Invitees = raw_event[7]
     
         return event
         
@@ -63,7 +61,6 @@ class EventService:
                         eventName,
                         description,
                         location,
-                        dateId,
                         startTime,
                         endTime,
                         program,
@@ -78,11 +75,10 @@ class EventService:
                     'eventName': row[1],
                     'description': row[2],
                     'location': row[3],
-                    'dateId': row[4],
-                    'startTime': row[5],
-                    'endTime': row[6],
-                    'program': row[7],
-                    'invitees': row[8]
+                    'startTime': row[4],
+                    'endTime': row[5],
+                    'program': row[6],
+                    'invitees': row[7]
                 }
                 events.append(event)
         
@@ -93,14 +89,13 @@ class EventService:
         with con:
             sql_insert = """
             INSERT INTO event
-            (eventName, description, location, dateId, startTime, endTime, program, invitees)
-            values(?, ?, ?, ?, ?, ?, ?, ?)"""
+            (eventName, description, location, startTime, endTime, program, invitees)
+            values(?, ?, ?, ?, ?, ?, ?)"""
 
             con.execute(sql_insert, (
                 event_object.eventName,
                 event_object.description,
                 event_object.location,
-                event_object.dateId,
                 event_object.startTime,
                 event_object.endTime,
                 event_object.program,
@@ -135,7 +130,6 @@ class EventService:
                 eventName = ?,
                 description = ?,
                 location = ?,
-                dateId = ?,
                 startTime = ?,
                 endTime = ?,
                 program = ?,
@@ -148,7 +142,6 @@ class EventService:
                 event_object.eventName,
                 event_object.description,
                 event_object.location,
-                event_object.dateId,
                 event_object.startTime,
                 event_object.endTime,
                 event_object.program,
