@@ -8,6 +8,7 @@ class Event:
     eventName = None
     description = None
     location = None
+    date = None
     startTime = None
     endTime = None
     program = None
@@ -21,6 +22,7 @@ class Event:
         self.eventName = Event.eventName
         self.description = Event.description
         self.location = Event.location
+        self.date = Event.date
         self.startTime = Event.startTime
         self.endTime = Event.endTime
         self.program = Event.program
@@ -36,6 +38,7 @@ class Event:
             'eventName': self.eventName,
             'description': self.description,
             'location': self.location,
+            'date': self.date,
             'startTime': self.startTime,
             'endTime': self.endTime,
             'program': self.program,

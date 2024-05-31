@@ -2,6 +2,7 @@ import sqlite3
 from Models.Event import Event
 
 from Exceptions.event_not_found_exception import EventNotFoundException
+from Exceptions.event_duplicate_exception import EventDuplicateException
 
 con = sqlite3.connect('db.db', check_same_thread=False)
 
@@ -18,6 +19,7 @@ class EventService:
                         eventName,
                         description,
                         location,
+                        date,
                         startTime,
                         endTime,
                         program,
@@ -37,10 +39,11 @@ class EventService:
             event.EventName = raw_event[1]
             event.Description = raw_event[2]
             event.Location = raw_event[3]
-            event.StartTime = raw_event[4]
-            event.EndTime = raw_event[5]
-            event.Program = raw_event[6]
-            event.Invitees = raw_event[7]
+            event.Date = raw_event[4]
+            event.StartTime = raw_event[5]
+            event.EndTime = raw_event[6]
+            event.Program = raw_event[7]
+            event.Invitees = raw_event[8]
     
         return event
         
@@ -61,6 +64,7 @@ class EventService:
                         eventName,
                         description,
                         location,
+                        date,
                         startTime,
                         endTime,
                         program,
@@ -68,17 +72,18 @@ class EventService:
                         FROM event"""
             
             raw_events = con.execute(query).fetchall()
-            
+
             for row in raw_events:
                 event = {
                     'id': row[0],
                     'eventName': row[1],
                     'description': row[2],
                     'location': row[3],
-                    'startTime': row[4],
-                    'endTime': row[5],
-                    'program': row[6],
-                    'invitees': row[7]
+                    'date': row[4],
+                    'startTime': row[5],
+                    'endTime': row[6],
+                    'program': row[7],
+                    'invitees': row[8]
                 }
                 events.append(event)
         
@@ -87,15 +92,33 @@ class EventService:
     def addEvent(self, event_object: Event):
         """Параметры: ожидаемый тип данных"""
         with con:
+            sql_select = """SELECT * FROM event
+            WhERE eventName = ? AND description = ? AND location = ? AND date = ? AND startTime = ? AND endTime = ? AND program = ? AND invitees = ?"""
+            
+            searchResult = con.execute(sql_select, (
+                event_object.eventName,
+                event_object.description,
+                event_object.location,
+                event_object.date,
+                event_object.startTime,
+                event_object.endTime,
+                event_object.program,
+                event_object.invitees
+            )).fetchone()
+            
+            if searchResult is not None:
+                raise EventDuplicateException('Такое мероприятие уже есть')
+            
             sql_insert = """
             INSERT INTO event
-            (eventName, description, location, startTime, endTime, program, invitees)
-            values(?, ?, ?, ?, ?, ?, ?)"""
+            (eventName, description, location, date, startTime, endTime, program, invitees)
+            values(?, ?, ?, ?, ?, ?, ?, ?)"""
 
             con.execute(sql_insert, (
                 event_object.eventName,
                 event_object.description,
                 event_object.location,
+                event_object.date,
                 event_object.startTime,
                 event_object.endTime,
                 event_object.program,
@@ -120,6 +143,23 @@ class EventService:
     def updateEvent(self, id, event_object: Event):
         """в con.execute кроме всех полей прописываем id, так как для изменения записи нужны все поля"""
         with con:
+            sql_select = """SELECT * FROM event
+            WhERE eventName = ? AND description = ? AND location = ? AND date = ? AND startTime = ? AND endTime = ? AND program = ? AND invitees = ?"""
+            
+            searchResult = con.execute(sql_select, (
+                event_object.eventName,
+                event_object.description,
+                event_object.location,
+                event_object.date,
+                event_object.startTime,
+                event_object.endTime,
+                event_object.program,
+                event_object.invitees
+            )).fetchone()
+            
+            if searchResult is not None:
+                raise EventDuplicateException('Такое мероприятие уже есть')
+            
             raw_event_id = con.execute("""SELECT id FROM event WHERE id = ?""", (id,)).fetchone()
             if raw_event_id == None:
                 raise EventNotFoundException(f'Мероприятие с id {id} не найдено')   
@@ -130,6 +170,7 @@ class EventService:
                 eventName = ?,
                 description = ?,
                 location = ?,
+                date = ?,
                 startTime = ?,
                 endTime = ?,
                 program = ?,
@@ -142,6 +183,7 @@ class EventService:
                 event_object.eventName,
                 event_object.description,
                 event_object.location,
+                event_object.date,
                 event_object.startTime,
                 event_object.endTime,
                 event_object.program,

@@ -58,6 +58,7 @@ class Connection:
                                 eventName TEXT,
                                 description TEXT,
                                 location TEXT,
+                                date TEXT,
                                 startTime INTEGER NOT NULL,
                                 endTime INTEGER NOT NULL,
                                 program TEXT,
@@ -68,8 +69,8 @@ class Connection:
     def insertEventData(self):
         """Заполняет тестовыми данными"""
         sql = """INSERT INTO event
-            (eventName, description, location, startTime, endTime, program, invitees)
-            values(?, ?, ?, ?, ?, ?, ?)
+            (eventName, description, location, date, startTime, endTime, program, invitees)
+            values(?, ?, ?, ?, ?, ?, ?, ?)
             """
         
         """тестовые данные"""
@@ -77,15 +78,17 @@ class Connection:
             ('День космонавтики', 
              'Праздник Дня Космонавтики: Откройте Вселенную вместе с нами! Присоединяйтесь к увлекательным мероприятиям, посвященным освоению космоса и достижениям человечества в космических исследованиях.', 
              'Площадь Ленина', 
-             '09:00:00',
-             '20:00:00',
+             '2024-04-12',
+             '09:00',
+             '20:00',
              'Открытие, конкурс, шоу',
              'Иванов, Петров, Киселев'),
             ('День Победы',
              'Мероприятие в честь Дня Победы: Память и Почитание',
              'Ул. Ленина',
-             '10:00:00',
-             '12:00:00',
+             '2024-05-09',
+             '10:00',
+             '12:00',
              'Парад Победы, Бессмертный полк',
              'Зубков, Крылов, Морозов')
         ]
