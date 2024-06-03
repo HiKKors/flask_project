@@ -19,7 +19,7 @@ class EventService:
                         eventName,
                         description,
                         location,
-                        date,
+                        DateId,
                         startTime,
                         endTime,
                         program,
@@ -36,14 +36,14 @@ class EventService:
             event = Event()
             
             event.id = raw_event[0]
-            event.EventName = raw_event[1]
-            event.Description = raw_event[2]
-            event.Location = raw_event[3]
-            event.Date = raw_event[4]
-            event.StartTime = raw_event[5]
-            event.EndTime = raw_event[6]
-            event.Program = raw_event[7]
-            event.Invitees = raw_event[8]
+            event.eventName = raw_event[1]
+            event.description = raw_event[2]
+            event.location = raw_event[3]
+            event.DateId = raw_event[4]
+            event.startTime = raw_event[5]
+            event.endTime = raw_event[6]
+            event.program = raw_event[7]
+            event.invitees = raw_event[8]
     
         return event
         
@@ -64,7 +64,7 @@ class EventService:
                         eventName,
                         description,
                         location,
-                        date,
+                        DateId,
                         startTime,
                         endTime,
                         program,
@@ -79,7 +79,7 @@ class EventService:
                     'eventName': row[1],
                     'description': row[2],
                     'location': row[3],
-                    'date': row[4],
+                    'DateId': row[4],
                     'startTime': row[5],
                     'endTime': row[6],
                     'program': row[7],
@@ -93,13 +93,13 @@ class EventService:
         """Параметры: ожидаемый тип данных"""
         with con:
             sql_select = """SELECT * FROM event
-            WhERE eventName = ? AND description = ? AND location = ? AND date = ? AND startTime = ? AND endTime = ? AND program = ? AND invitees = ?"""
+            WHERE eventName = ? AND description = ? AND location = ? AND DateId = ? AND startTime = ? AND endTime = ? AND program = ? AND invitees = ?"""
             
             searchResult = con.execute(sql_select, (
                 event_object.eventName,
                 event_object.description,
                 event_object.location,
-                event_object.date,
+                event_object.DateId,
                 event_object.startTime,
                 event_object.endTime,
                 event_object.program,
@@ -111,14 +111,14 @@ class EventService:
             
             sql_insert = """
             INSERT INTO event
-            (eventName, description, location, date, startTime, endTime, program, invitees)
+            (eventName, description, location, DateId, startTime, endTime, program, invitees)
             values(?, ?, ?, ?, ?, ?, ?, ?)"""
 
             con.execute(sql_insert, (
                 event_object.eventName,
                 event_object.description,
                 event_object.location,
-                event_object.date,
+                event_object.DateId,
                 event_object.startTime,
                 event_object.endTime,
                 event_object.program,
@@ -131,26 +131,29 @@ class EventService:
         Возвращает: id удаленного мероприятия
         """
         with con:
+            sql_select = """SELECT * FROM event WHERE id = ?"""
+            raw_event = con.execute(sql_select, (id,)).fetchone()
+            
             sql_delete = """DELETE FROM event
             WHERE id = ?"""
             
-            raw_event = con.execute(sql_delete, (id,)).fetchone()
             if raw_event == None:
                 raise EventNotFoundException(f'Мероприятие с id {id} не найдено')
-            
-        return id
+            else:
+                raw_event = con.execute(sql_delete, (id,))
+                return id
     
     def updateEvent(self, id, event_object: Event):
         """в con.execute кроме всех полей прописываем id, так как для изменения записи нужны все поля"""
         with con:
             sql_select = """SELECT * FROM event
-            WhERE eventName = ? AND description = ? AND location = ? AND date = ? AND startTime = ? AND endTime = ? AND program = ? AND invitees = ?"""
+            WhERE eventName = ? AND description = ? AND location = ? AND v = ? AND startTime = ? AND endTime = ? AND program = ? AND invitees = ?"""
             
             searchResult = con.execute(sql_select, (
                 event_object.eventName,
                 event_object.description,
                 event_object.location,
-                event_object.date,
+                event_object.DateId,
                 event_object.startTime,
                 event_object.endTime,
                 event_object.program,
@@ -170,7 +173,7 @@ class EventService:
                 eventName = ?,
                 description = ?,
                 location = ?,
-                date = ?,
+                DateId = ?,
                 startTime = ?,
                 endTime = ?,
                 program = ?,
@@ -183,7 +186,7 @@ class EventService:
                 event_object.eventName,
                 event_object.description,
                 event_object.location,
-                event_object.date,
+                event_object.DateId,
                 event_object.startTime,
                 event_object.endTime,
                 event_object.program,

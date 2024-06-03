@@ -11,34 +11,26 @@ from Services.eventService import EventService
 
 from Exceptions.event_not_found_exception import EventNotFoundException
 from Exceptions.event_duplicate_exception import EventDuplicateException
+from Exceptions.exceptionDetails import ExceptionDetails
 
 # для валидации
-from flask_wtf import FlaskForm
-from wtforms import DateField, TimeField, StringField, TextAreaField
-from wtforms.validators import DataRequired
-from flask_wtf.csrf import CSRFProtect, CSRFError
+from jsonschema.exceptions import ValidationError
+from Validators.eventValidator import EventValidator
 
-# связь с сервисом
+from logger import logger
+
+# связь с сервисом базы данных
 _eventService = EventService()
+# связь с валидатором
+_eventValidator = EventValidator()
 
-# app.config['SECRET_KEY'] = 'your secret key'
-# csrf = CSRFProtect(app)
-
-
-# class EventForm(FlaskForm):
-#     eventName = StringField('Event Name', validators = [DataRequired()])
-#     description = TextAreaField('Description', validators=[DataRequired()])
-#     location = StringField('Location', validators=[DataRequired()])
-#     date = DateField('Date', format = '%Y-%m-%d')
-#     startTime = TimeField('Start Time', format='%H:%M')
-#     endTime = TimeField('End Time', format='%H:%M')
-#     program = TextAreaField('Program', validators=[DataRequired()])
-#     invitees = StringField('Invitees', validators=[DataRequired()])
-    
-# @app.before_request
-# def disable_csrf_protection_on_api():
-#     if request.path.startswith("/es/"):
-#         csrf.exempt(disable_csrf_protection_on_api)
+def format_validation_error(e):
+    """Форматирование ошибки валидации для включения названий полей."""
+    error_details = {
+        "message": e.message,
+        "field": e.path
+    }
+    return error_details
 
 class EventControler(Resource):
     """
@@ -61,11 +53,14 @@ class EventControler(Resource):
         
         GET-операция
         Запрашивает у сервиса и возвращает объект со одной записью с id = event_id
+        
+        Обрабтка исключения: при отсутствии введенного id в ответ поступает строка с соответствующим сообщением 
         """
         try:
             event = _eventService.findEvent(event_id)
             return jsonify(event.serialize())
         except EventNotFoundException as exp:
+            logger.error(f"Произошла ошибка при поиске мероприятия с id: {event_id}. Подробности: {exp}")
             return Response(exp.message, status=404)
         
     @staticmethod
@@ -76,11 +71,14 @@ class EventControler(Resource):
         
         DELETE-операция
         Запрашивает у сервиса и возвращает id удаленного мероприятия
+        
+        Обрабтка исключения: при отсутствии введенного id в ответ поступает строка с соответствующим сообщением
         """
         try:
             _eventService.deleteEvent(id)
             return jsonify(id)
         except EventNotFoundException as exp:
+            logger.error(f"Произошла ошибка при поиске мероприятия с id: {id}. Подробности: {exp}")
             return Response(exp.message, status=404)
         
     @staticmethod
@@ -91,24 +89,32 @@ class EventControler(Resource):
         Добавляет новую запись в таблицу
         
         Возвращает: все записи, вместе с новой, в формате json
+        
+        При обновлении записи, если она является дубликатом, ответом будет являтся строка, говорящая о том что это дубликат, код ошибки - 409
         """
-        request_data = request.get_json()#получаем тело запроса
-            
-        event = Event()
-        event.eventName = request_data['eventName']
-        event.description = request_data['description']
-        event.location = request_data['location']
-        event.date = request_data['date']
-        event.startTime = request_data['startTime']
-        event.endTime = request_data['endTime']
-        event.program = request_data['program']
-        event.invitees = request_data['invitees']
-
-            
         try:
+            request_data = request.get_json()#получаем тело запроса
+            _eventValidator.validate_event(request_data)
+                
+            event = Event()
+            event.eventName = request_data['eventName']
+            event.description = request_data['description']
+            event.location = request_data['location']
+            event.DateId = request_data['DateId']
+            event.startTime = request_data['startTime']
+            event.endTime = request_data['endTime']
+            event.program = request_data['program']
+            event.invitees = request_data['invitees']
+    
             _eventService.addEvent(event)
             return jsonify({'events': _eventService.findAllEvents()})
+        except ValidationError as error:
+            # Форматирование ошибки валидации для включения названий полей
+            error_details = [format_validation_error(error) for e in error.context] or [format_validation_error(error)]
+            logger.error(f'{request_data}\n Произошла ошибка ввода. Подробности: {error_details}')
+            return Response(f'Ошибка ввода\nОшибка в поле {error_details[0]["field"]}\n Подробности: {error_details[0]["message"]}')
         except EventDuplicateException as exp:
+            logger.error(f"{request_data}\nПроизошла ошибка при добавлении мероприятия. Подробности: {exp}")
             return Response(exp.message, status=409)
     
     
@@ -122,23 +128,31 @@ class EventControler(Resource):
         Обновляет данные для записи с введенным id 
         
         Возвращает: Список всех записей
-        """
-        request_data = request.get_json()
-        # print(request_data)
         
-        event = Event()
-        event.eventName = request_data['eventName']
-        event.description = request_data['description']
-        event.location = request_data['location']
-        event.date = request_data['date']
-        event.startTime = request_data['startTime']
-        event.endTime = request_data['endTime']
-        event.program = request_data['program']
-        event.invitees = request_data['invitees']
-
+        При обновлении записи, если она является дубликатом, ответом будет являтся строка, говорящая о том что это дубликат, код ошибки - 409
+        """
         try:
+            request_data = request.get_json()
+            _eventValidator.validate_event(request_data)
+            
+            event = Event()
+            event.eventName = request_data['eventName']
+            event.description = request_data['description']
+            event.location = request_data['location']
+            event.DateId = request_data['DateId']
+            event.startTime = request_data['startTime']
+            event.endTime = request_data['endTime']
+            event.program = request_data['program']
+            event.invitees = request_data['invitees']
+
+        
             _eventService.updateEvent(id, event)
             return jsonify({'events': _eventService.findAllEvents()})
+        except ValidationError as error:
+            # Форматирование ошибки валидации для включения названий полей
+            error_details = [format_validation_error(error) for e in error.context] or [format_validation_error(error)]
+            logger.error(f'{request_data}\n Произошла ошибка ввода. Подробности: {error_details}')
+            return Response(f'Ошибка ввода\nОшибка в поле {error_details[0]["field"]}\n Подробности: {error_details[0]["message"]}')
         except EventNotFoundException as exp:
             return Response(exp.message, status=404)
         except EventDuplicateException as exp:

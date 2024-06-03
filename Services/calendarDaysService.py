@@ -2,6 +2,7 @@ import sqlite3
 from Models.CalendarDays import CalendarDays
 
 from Exceptions.calendarDay_not_found_exception import CalendarDayNotFoundException
+from Exceptions.calendarDay_duplicate_exception import CalendarDayDyplicateException
 
 con = sqlite3.connect('db.db', check_same_thread=False)
 
@@ -15,7 +16,7 @@ class CalendarDayService:
         with con:
             query = """SELECT 
                         id,
-                        event_id,
+                        Date,
                         WeekDay,
                         DayType
                         FROM calendarDay
@@ -24,12 +25,12 @@ class CalendarDayService:
             """Получаем одну запись"""
             raw_day = con.execute(query, (id,)).fetchone()
             if raw_day == None:
-                raise CalendarDayNotFoundException('В этот день нет никаких мероприятий')
+                raise CalendarDayNotFoundException(f'Дня с id {id} нет в базе данных')
             
             calendarDay = CalendarDays()
             
             calendarDay.id = raw_day[0]
-            calendarDay.event_id = raw_day[1]
+            calendarDay.Date = raw_day[1]
             calendarDay.WeekDay = raw_day[2]
             calendarDay.DayType = raw_day[3]
     
@@ -49,7 +50,7 @@ class CalendarDayService:
         with con:
             query = """SELECT
                         id,
-                        event_id,
+                        Date,
                         WeekDay,
                         DayType
                         FROM calendarDay"""
@@ -58,7 +59,7 @@ class CalendarDayService:
             for row in raw_day:
                 event = {
                     'id': row[0],
-                    'event_id': row[1],
+                    'Date': row[1],
                     'WeekDay': row[2],
                     'DayType': row[3]
                 }
@@ -68,13 +69,25 @@ class CalendarDayService:
     
     def addCalendarDay(self, calendar_object: CalendarDays):
         with con:
+            sql_select = """SELECT * FROM calendarDay
+            WHERE Date = ? AND WeekDay = ? AND DayType = ?"""
+            
+            searchResult = con.execute(sql_select, (
+                calendar_object.Date,
+                calendar_object.WeekDay,
+                calendar_object.DayType,
+            )).fetchone()
+            
+            if searchResult is not None:
+                raise CalendarDayDyplicateException('Такое календарный день уже есть')
+            
             sql_insert = """
             INSERT INTO calendarDay
-            (event_id, WeekDay, DayType)
+            (Date, WeekDay, DayType)
             values(?, ?, ?)"""
 
             con.execute(sql_insert, (
-                calendar_object.event_id,
+                calendar_object.Date,
                 calendar_object.WeekDay,
                 calendar_object.DayType
             ))
@@ -86,7 +99,7 @@ class CalendarDayService:
             
             raw_calendarDay = con.execute(sql_delete, (id,)).fetchone()
             if raw_calendarDay == None:
-                raise CalendarDayNotFoundException(f'Даты с id {id} не найдено')
+                raise CalendarDayNotFoundException(f'Дня с id {id} нет в базе данных')
             
         return id
     
@@ -94,12 +107,12 @@ class CalendarDayService:
         with con:
             raw_calendarDay_id = con.execute("SELECT id FROM calendarDay WHERE id=?", (id,)).fetchone()
             if raw_calendarDay_id == None:
-                raise CalendarDayNotFoundException(f'Даты с id {id} не найдено')
+                raise CalendarDayNotFoundException(f'Дня с id {id} нет в базе данных')
             
             sql_update = """
             UPDATE calendarDay
             SET
-                event_id = ?,
+                Date = ?,
                 WeekDay = ?,
                 DayType = ?
             WHERE
@@ -107,7 +120,7 @@ class CalendarDayService:
             """
             
             con.execute(sql_update, (
-                calendar_object.event_id,
+                calendar_object.Date,
                 calendar_object.WeekDay,
                 calendar_object.DayType,
                 id

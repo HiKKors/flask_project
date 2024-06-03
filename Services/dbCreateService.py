@@ -19,22 +19,21 @@ class Connection:
                         con.execute("""
                             CREATE TABLE IF NOT EXISTS calendarDay (
                                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                event_id INTEGER NOT NULL,
+                                Date TEXT NOT NULL,
                                 WeekDay TEXT,
-                                DayType TEXT,
-                                FOREIGN KEY (event_id) REFERENCES event (id)
+                                DayType TEXT
                             );
                         """)
                         
     def insertCalendarData(self):
         """Заполняет таблицу тестовыми данными"""
         sql = """INSERT INTO calendarDay
-            (event_id, WeekDay, DayType)
+            (Date, WeekDay, DayType)
             values(?, ?, ?)
             """
             
-        data = [(1, 'Пятница', 'Будний'),
-                (2, 'Четверг', 'Будний'),]
+        data = [('2024-04-12', 'Пятница', 'Будний'),
+                ('2024-05-09', 'Четверг', 'Будний'),]
         
         with con:
             con.executemany(sql, data)
@@ -58,18 +57,19 @@ class Connection:
                                 eventName TEXT,
                                 description TEXT,
                                 location TEXT,
-                                date TEXT,
+                                DateId INTEGER NOT NULL,
                                 startTime INTEGER NOT NULL,
                                 endTime INTEGER NOT NULL,
                                 program TEXT,
-                                invitees TEXT
+                                invitees TEXT,
+                                FOREIGN KEY (DateId) REFERENCES calendarDay (id)
                             );
                         """)
                         
     def insertEventData(self):
         """Заполняет тестовыми данными"""
         sql = """INSERT INTO event
-            (eventName, description, location, date, startTime, endTime, program, invitees)
+            (eventName, description, location, DateId, startTime, endTime, program, invitees)
             values(?, ?, ?, ?, ?, ?, ?, ?)
             """
         
@@ -78,7 +78,7 @@ class Connection:
             ('День космонавтики', 
              'Праздник Дня Космонавтики: Откройте Вселенную вместе с нами! Присоединяйтесь к увлекательным мероприятиям, посвященным освоению космоса и достижениям человечества в космических исследованиях.', 
              'Площадь Ленина', 
-             '2024-04-12',
+             1,
              '09:00',
              '20:00',
              'Открытие, конкурс, шоу',
@@ -86,7 +86,7 @@ class Connection:
             ('День Победы',
              'Мероприятие в честь Дня Победы: Память и Почитание',
              'Ул. Ленина',
-             '2024-05-09',
+             2,
              '10:00',
              '12:00',
              'Парад Победы, Бессмертный полк',

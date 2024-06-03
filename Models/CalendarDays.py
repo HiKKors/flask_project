@@ -5,7 +5,7 @@ class CalendarDays:
     Создаем переменные с дефолтным значением - None, это наши поля таблицы
     """
     id = None
-    event_id = None
+    Date = None
     WeekDay = None
     DayType = None
     
@@ -14,7 +14,7 @@ class CalendarDays:
         Затем инициализируем их
         """
         self.id = CalendarDays.id
-        self.event_id = CalendarDays.event_id
+        self.Date = CalendarDays.Date
         self.WeekDay = CalendarDays.WeekDay
         self.DayType = CalendarDays.DayType
         
@@ -25,7 +25,7 @@ class CalendarDays:
         """
         return {
             'id': self.id,
-            'event_id': self.event_id,
+            'Date': self.Date,
             'WeekDay': self.WeekDay,
             'DayType': self.DayType
         }

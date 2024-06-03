@@ -1,0 +1,9 @@
+{
+    "type": "object",
+    "properties": {
+      "Date": {"type": "string", "format": "date"},
+      "WeekDay": {"type": "string"},
+      "DayType": {"type": "string"}
+    },
+    "required": ["Date", "WeekDay", "DayType"]
+  }

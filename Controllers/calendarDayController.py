@@ -8,8 +8,23 @@ from Models.CalendarDays import CalendarDays
 from Services.calendarDaysService import CalendarDayService
 
 from Exceptions.calendarDay_not_found_exception import CalendarDayNotFoundException
+from Exceptions.calendarDay_duplicate_exception import CalendarDayDyplicateException
+
+from jsonschema.exceptions import ValidationError
+from Validators.calendarDayValidator import CalendarDayValidator
+
+from logger import logger
+
+def format_validation_error(e):
+    """Форматирование ошибки валидации для включения названий полей."""
+    error_details = {
+        "message": e.message,
+        "field": e.path
+    }
+    return error_details
 
 _calendarDayService = CalendarDayService()
+_calendarDayValidator = CalendarDayValidator()
 
 class CalendarDayController(Resource):
     """
@@ -37,6 +52,7 @@ class CalendarDayController(Resource):
             calendar_day = _calendarDayService.findCalendarDay(calendar_day_id)
             return jsonify(calendar_day.serialize())
         except CalendarDayNotFoundException as exp:
+            logger.error(f'Произошла ошибка при поиске календарного дня с id {calendar_day_id}. Подробности: {exp}')
             return Response(exp.message, status=404)
         
         
@@ -53,6 +69,7 @@ class CalendarDayController(Resource):
             _calendarDayService.deteleCalendarDay(id)
             return jsonify(id)
         except CalendarDayNotFoundException as exp:
+            logger.error(f'Произошла ошибка при поиске календарного дня с id {id}. Подробности: {exp}')
             return Response(exp.message, status=404)
         
     @staticmethod
@@ -64,16 +81,26 @@ class CalendarDayController(Resource):
         
         Возвращает: все записи, вместе с новой, в формате json
         """
-        request_data = request.get_json()#получаем тело запроса
+        try:
+            request_data = request.get_json()#получаем тело запроса
+            print(request_data)
+            _calendarDayValidator.validate_calendar_day(request_data)
         
-        calendarDay = CalendarDays()
-        calendarDay.event_id = request_data['event_id']
-        calendarDay.WeekDay = request_data['WeekDay']
-        calendarDay.DayType = request_data['DayType']
-
-        _calendarDayService.addCalendarDay(calendarDay)
-
-        return jsonify({'calendarDays': _calendarDayService.findAllCalendarDays()})
+            calendarDay = CalendarDays()
+            calendarDay.Date = request_data['Date']
+            calendarDay.WeekDay = request_data['WeekDay']
+            calendarDay.DayType = request_data['DayType']
+        
+            _calendarDayService.addCalendarDay(calendarDay)
+            
+            return jsonify({'calendarDays': _calendarDayService.findAllCalendarDays()})
+        except ValidationError as error:
+            error_details = [format_validation_error(error) for e in error.context] or [format_validation_error(error)]
+            logger.error(f'{request_data}\n Произошла ошибка ввода. Подробности: {error_details}')
+            return Response(f'Ошибка ввода\nОшибка в поле {error_details[0]["field"]}\n Подробности: {error_details[0]["message"]}')
+        except CalendarDayDyplicateException as exp:
+            logger.error(f"{request_data}\nПроизошла ошибка при добавлении календарного дня. Подробности: {exp}")
+            return Response(exp.message, status=409)
     
     @staticmethod
     @app.route('/cds/v1/calendarDays/<int:id>', methods=['PUT'])
@@ -86,15 +113,24 @@ class CalendarDayController(Resource):
         
         Возвращает: Список всех записей
         """
-        request_data = request.get_json()
-        
-        calendarDay = CalendarDays()
-        calendarDay.event_id = request_data['event_id']
-        calendarDay.WeekDay = request_data['WeekDay']
-        calendarDay.DayType = request_data['DayType']
-
         try:
+            request_data = request.get_json()
+            _calendarDayValidator.validate_calendar_day(request_data)
+            
+            calendarDay = CalendarDays()
+            calendarDay.Date = request_data['Date']
+            calendarDay.WeekDay = request_data['WeekDay']
+            calendarDay.DayType = request_data['DayType']
+
+        
             _calendarDayService.updateCalendarDay(id, calendarDay)
             return jsonify({'calendarDays': _calendarDayService.findAllCalendarDays()})
+        except ValidationError as error:
+            error_details = [format_validation_error(error) for e in error.context] or [format_validation_error(error)]
+            logger.error(f'{request_data}\n Произошла ошибка ввода. Подробности: {error_details}')
+            return Response(f'Ошибка ввода\nОшибка в поле {error_details[0]["field"]}\n Подробности: {error_details[0]["message"]}')
         except CalendarDayNotFoundException as exp:
+            logger.error(f'Ошибка поиска каледнарного дня с id {id}. Подробности: {exp}')
             return Response(exp.message, status=404)
+        except CalendarDayDyplicateException as exp:
+            return Response(exp.message, status=409)
