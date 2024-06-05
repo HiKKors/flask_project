@@ -50,7 +50,7 @@ class CalendarDayController(Resource):
         """
         try:
             calendar_day = _calendarDayService.findCalendarDay(calendar_day_id)
-            return jsonify(calendar_day.serialize())
+            return jsonify(calendar_day)
         except CalendarDayNotFoundException as exp:
             logger.error(f'Произошла ошибка при поиске календарного дня с id {calendar_day_id}. Подробности: {exp}')
             return Response(exp.message, status=404)

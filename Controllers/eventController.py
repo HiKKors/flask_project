@@ -11,6 +11,7 @@ from Services.eventService import EventService
 
 from Exceptions.event_not_found_exception import EventNotFoundException
 from Exceptions.event_duplicate_exception import EventDuplicateException
+from Exceptions.EventIdException import EventIdException
 from Exceptions.exceptionDetails import ExceptionDetails
 
 # для валидации
@@ -58,10 +59,13 @@ class EventControler(Resource):
         """
         try:
             event = _eventService.findEvent(event_id)
-            return jsonify(event.serialize())
+            return jsonify(event)
+        except EventIdException as exp:
+            return Response(exp.message, status=404)
         except EventNotFoundException as exp:
             logger.error(f"Произошла ошибка при поиске мероприятия с id: {event_id}. Подробности: {exp}")
             return Response(exp.message, status=404)
+        
         
     @staticmethod
     @app.route('/es/v1/events/<int:id>', methods=['DELETE'])
@@ -77,6 +81,8 @@ class EventControler(Resource):
         try:
             _eventService.deleteEvent(id)
             return jsonify(id)
+        except EventIdException as exp:
+            return Response(exp.message, status=404)
         except EventNotFoundException as exp:
             logger.error(f"Произошла ошибка при поиске мероприятия с id: {id}. Подробности: {exp}")
             return Response(exp.message, status=404)
@@ -148,6 +154,8 @@ class EventControler(Resource):
         
             _eventService.updateEvent(id, event)
             return jsonify({'events': _eventService.findAllEvents()})
+        except EventIdException as exp:
+            return Response(exp.message, status=404)
         except ValidationError as error:
             # Форматирование ошибки валидации для включения названий полей
             error_details = [format_validation_error(error) for e in error.context] or [format_validation_error(error)]

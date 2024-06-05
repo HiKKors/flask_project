@@ -3,12 +3,15 @@ from Models.CalendarDays import CalendarDays
 
 from Exceptions.calendarDay_not_found_exception import CalendarDayNotFoundException
 from Exceptions.calendarDay_duplicate_exception import CalendarDayDyplicateException
+from Exceptions.calendarDayIdException import CalendarDayIdException
 
 con = sqlite3.connect('db.db', check_same_thread=False)
 
 
 class CalendarDayService:
     def findCalendarDay(self, id):
+        if id <= 0:
+            raise CalendarDayIdException('id должен быть больше 0')
         """
         Параметры: id нужного дня
         Возвращает: данные о дне с введенным id (формат: json)
@@ -93,6 +96,8 @@ class CalendarDayService:
             ))
             
     def deteleCalendarDay(self, id):
+        if id <= 0:
+            raise CalendarDayIdException('id должен быть больше 0')
         with con:
             sql_delete = """DELETE FROM calendarDay
             WHERE id = ?"""
@@ -104,6 +109,8 @@ class CalendarDayService:
         return id
     
     def updateCalendarDay(self, id, calendar_object: CalendarDays):
+        if id <= 0:
+            raise CalendarDayIdException('id должен быть больше 0')
         with con:
             raw_calendarDay_id = con.execute("SELECT id FROM calendarDay WHERE id=?", (id,)).fetchone()
             if raw_calendarDay_id == None:

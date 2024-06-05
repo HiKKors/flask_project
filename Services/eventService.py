@@ -3,11 +3,14 @@ from Models.Event import Event
 
 from Exceptions.event_not_found_exception import EventNotFoundException
 from Exceptions.event_duplicate_exception import EventDuplicateException
+from Exceptions.EventIdException import EventIdException
 
 con = sqlite3.connect('db.db', check_same_thread=False)
 
 class EventService:
     def findEvent(self, id):
+        if id <= 0:
+            raise EventIdException('id должен быть больше 0')
         """
         Параметры: id нужного мероприятия
         Возвращает: мероприятие с введенным id (формат: json)
@@ -126,6 +129,8 @@ class EventService:
             ))
             
     def deleteEvent(self, id):
+        if id <= 0:
+            raise EventIdException('id должен быть больше 0')
         """
         Параметры: id мероприятия, которое хотим удалить
         Возвращает: id удаленного мероприятия
@@ -143,11 +148,19 @@ class EventService:
                 raw_event = con.execute(sql_delete, (id,))
                 return id
     
+    def delete_data(self):
+        with con:
+            sql_delete = """DELETE FROM event"""
+            
+            raw_event = con.execute(sql_delete)
+    
     def updateEvent(self, id, event_object: Event):
+        if id <= 0:
+            raise EventIdException('id должен быть больше 0')
         """в con.execute кроме всех полей прописываем id, так как для изменения записи нужны все поля"""
         with con:
             sql_select = """SELECT * FROM event
-            WhERE eventName = ? AND description = ? AND location = ? AND v = ? AND startTime = ? AND endTime = ? AND program = ? AND invitees = ?"""
+            WhERE eventName = ? AND description = ? AND location = ? AND DateId = ? AND startTime = ? AND endTime = ? AND program = ? AND invitees = ?"""
             
             searchResult = con.execute(sql_select, (
                 event_object.eventName,

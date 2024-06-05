@@ -97,6 +97,18 @@ class Connection:
             """соединение данных и запроса"""
             con.executemany(sql, data)
             
+    def drop_event(self):
+        sql_drop = """DROP TABLE event"""
+        
+        with con:
+            con.execute(sql_drop)
+            
+    def drop_calendarDay(self):
+        sql_drop = """DROP TABLE calendarDay"""
+        
+        with con:
+            con.execute(sql_drop)
+        
     def connect(self):
         self.createTableCalendarDays()
         self.insertCalendarData()

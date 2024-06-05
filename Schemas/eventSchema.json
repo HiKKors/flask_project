@@ -4,7 +4,7 @@
     "eventName": {"type": "string"},
     "description": {"type": "string"},
     "location": {"type": "string"},
-    "DateId": {"type": "ineger"},
+    "DateId": {"type": "integer"},
     "startTime": {"type": "string", "format": "time"},
     "endTime": {"type": "string", "format": "time"},
     "program": {"type": "string"},
