@@ -99,12 +99,18 @@ class CalendarDayService:
         if id <= 0:
             raise CalendarDayIdException('id должен быть больше 0')
         with con:
+            sql_select = """SELECT * FROM calendarDay WHERE id = ?"""
+            
+            raw_calendarDay = con.execute(sql_select, (id,)).fetchone()
+            
+            if raw_calendarDay == None:
+                raise CalendarDayNotFoundException(f'Дня с id {id} нет в базе данных')
+            
             sql_delete = """DELETE FROM calendarDay
             WHERE id = ?"""
             
-            raw_calendarDay = con.execute(sql_delete, (id,)).fetchone()
-            if raw_calendarDay == None:
-                raise CalendarDayNotFoundException(f'Дня с id {id} нет в базе данных')
+            con.execute(sql_delete, (id,)).fetchone()
+            
             
         return id
     
@@ -132,3 +138,9 @@ class CalendarDayService:
                 calendar_object.DayType,
                 id
             ))
+            
+    def delete_data(self):
+        sql_delete = """DELETE FROM calendarDay"""
+        
+        with con:
+            con.execute(sql_delete)

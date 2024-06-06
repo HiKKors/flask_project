@@ -1,11 +1,9 @@
 import pytest
 
-from Services import EventService, CalendarDayService
-from Models import Event, CalendarDays
+from Services import EventService
+from Models import Event
 
 from Services.dbCreateService import Connection
-
-from Exceptions.event_duplicate_exception import EventDuplicateException
 
 event_service = EventService()
 
@@ -42,7 +40,11 @@ def test_get_one_event_correct_1():
         and res_event.invitees == event.invitees
     )
     
-def test_get_one_event_correct_2():    
+def test_get_one_event_correct_2():  
+    """
+    Тестирование функции findEvent() с правильными данными (второй кейс).
+    Проверяется поиск события по заданному id.
+    """  
     event_1 = Event(eventName = 'День Победы', 
              description = 'Мероприятие в честь Дня Победы: Память и Почитание', 
              location = 'Ул. Ленина', 
@@ -114,6 +116,10 @@ def test_get_one_event_failed_2():
     )
     
 def test_add_event_correct_1():
+    """
+    Тестирование функции addEvent() с корректными данными.
+    Проверяется добавление нового события.
+    """
     event_service.delete_data()
     
     new_event = Event(
@@ -136,6 +142,10 @@ def test_add_event_correct_1():
     assert len(events_with_new_event) == initial_events_count + 1
     
 def test_add_event_correct_2():
+    """
+    Тестирование функции addEvent() с корректными данными (второй кейс).
+    Добавление второго события.
+    """
     new_event = Event(
         eventName='День Победы', 
         description='Мероприятие в честь Дня Победы: Память и Почитание', 
@@ -156,6 +166,10 @@ def test_add_event_correct_2():
     assert len(events_with_new_event) == initial_events_count + 1
     
 def test_add_event_failed_1():
+    """
+    Тестирование функции addEvent() с некорректными данными.
+    Пыаемся добавить дубликат
+    """
     new_event = Event(
         eventName='День космонавтики', 
         description='Праздник Дня Космонавтики: Откройте Вселенную вместе с нами! Присоединяйтесь к увлекательным мероприятиям, посвященным освоению космоса и достижениям человечества в космических исследованиях.', 
@@ -179,7 +193,10 @@ def test_add_event_failed_1():
     assert len(events_with_new_event) == initial_events_count + 1
     
 def test_add_event_failed_2():
-    
+    """
+    Тестирование функции addEvent() с корректными данными.
+    Добавляем запись без обязательного поля
+    """
     # создаем запись без какого-то поля
     new_event = Event(
         eventName='День космонавтики', 
@@ -203,7 +220,10 @@ def test_add_event_failed_2():
     assert len(events_with_new_event) == initial_events_count + 1
     
 def test_delete_event_correct_1():
-    
+    """
+    Тестирование функции deleteEvent() с корректными данными.
+    Проверяется удаление события по существующему id.
+    """
     con.drop_event()
     con.createEventTable()
     con.insertEventData()
@@ -218,7 +238,10 @@ def test_delete_event_correct_1():
     assert len(events_with_new_event) == initial_events_count - 1
 
 def test_delete_event_correct_2():
-    
+    """
+    Тестирование функции deleteEvent() с корректными данными.
+    Проверяется удаление события по существующему id (второй кейс).
+    """
     con.drop_event()
     con.createEventTable()
     con.insertEventData()
@@ -233,7 +256,10 @@ def test_delete_event_correct_2():
     assert len(events_with_new_event) == initial_events_count - 1
     
 def test_delete_event_failed_1():
-    
+    """
+    Тестирование функции deleteEvent() с корректными данными.
+    Проверяется удаление события по не существующему id.
+    """
     con.drop_event()
     con.createEventTable()
     con.insertEventData()
@@ -248,7 +274,10 @@ def test_delete_event_failed_1():
     assert len(events_with_new_event) == initial_events_count - 1
     
 def test_delete_event_failed_2():
-    
+    """
+    Тестирование функции deleteEvent() с корректными данными.
+    Проверяется удаление события по не существующему id (второй кейс).
+    """
     con.drop_event()
     con.createEventTable()
     con.insertEventData()
@@ -263,6 +292,10 @@ def test_delete_event_failed_2():
     assert len(events_with_new_event) == initial_events_count - 1
     
 def test_update_event_correct_1():
+    """
+    Тестирование функции updateEvent() с корректными данными.
+    Проверяется обновление данных события по id.
+    """
     con.drop_event()
     con.createEventTable()
     con.insertEventData()
@@ -293,6 +326,10 @@ def test_update_event_correct_1():
     assert updated_event.invitees == 'Обновленные участники'
     
 def test_update_event_correct_2():
+    """
+    Тестирование функции updateEvent() с корректными данными.
+    Проверяется обновление данных события по id (второй кейс).
+    """
     con.drop_event()
     con.createEventTable()
     con.insertEventData()
@@ -324,6 +361,10 @@ def test_update_event_correct_2():
     
     
 def test_update_event_failed_id():
+    """
+    Тестирование функции updateEvent() с корректными данными.
+    Проверяется обновление данных события по несуществующему id.
+    """
     con.drop_event()
     con.createEventTable()
     con.insertEventData()
@@ -357,6 +398,10 @@ def test_update_event_failed_id():
     assert updated_event.invitees == 'Обновленные участники__2'
 
 def test_update_event_failed_duplicate():
+    """
+    Тестирование функции updateEvent() с корректными данными.
+    Проверяется обновление данных дубликатом.
+    """
     con.drop_event()
     con.createEventTable()
     con.insertEventData()
