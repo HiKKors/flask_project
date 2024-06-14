@@ -4,6 +4,7 @@ from Models.Event import Event
 from Exceptions.event_not_found_exception import EventNotFoundException
 from Exceptions.event_duplicate_exception import EventDuplicateException
 from Exceptions.EventIdException import EventIdException
+from Exceptions.date_not_found_exception import DateNotFoundException
 
 con = sqlite3.connect('db.db', check_same_thread=False)
 
@@ -92,9 +93,18 @@ class EventService:
         
         return events
     
-    def addEvent(self, event_object: Event):
+    def addEvent(self, event_object: Event):        
         """Параметры: ожидаемый тип данных"""
+        date_id = event_object.DateId
         with con:
+            sql_find_date = """SELECT * FROM calendarDay
+            WHERE id = ?"""
+            dateResult = con.execute(sql_find_date, (date_id,)).fetchone()
+            
+            if dateResult == None:
+                raise DateNotFoundException(f'День с id {date_id} не найден')
+                
+            
             sql_select = """SELECT * FROM event
             WHERE eventName = ? AND description = ? AND location = ? AND DateId = ? AND startTime = ? AND endTime = ? AND program = ? AND invitees = ?"""
             
@@ -116,7 +126,18 @@ class EventService:
             INSERT INTO event
             (eventName, description, location, DateId, startTime, endTime, program, invitees)
             values(?, ?, ?, ?, ?, ?, ?, ?)"""
-
+            raw_event = con.execute(sql_insert, (
+                event_object.eventName,
+                event_object.description,
+                event_object.location,
+                event_object.DateId,
+                event_object.startTime,
+                event_object.endTime,
+                event_object.program,
+                event_object.invitees
+            ))
+            
+            print('НОВЫЙ ОБЪЕКТ:',raw_event)
             con.execute(sql_insert, (
                 event_object.eventName,
                 event_object.description,

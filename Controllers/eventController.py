@@ -13,6 +13,8 @@ from Exceptions.event_not_found_exception import EventNotFoundException
 from Exceptions.event_duplicate_exception import EventDuplicateException
 from Exceptions.EventIdException import EventIdException
 from Exceptions.exceptionDetails import ExceptionDetails
+from Exceptions.date_not_found_exception import DateNotFoundException
+
 
 # для валидации
 from jsonschema.exceptions import ValidationError
@@ -99,6 +101,8 @@ class EventControler(Resource):
         При обновлении записи, если она является дубликатом, ответом будет являтся строка, говорящая о том что это дубликат, код ошибки - 409
         """
         try:
+            if not request.data:
+                return "Вы не ввели данные", 400
             request_data = request.get_json()#получаем тело запроса
             _eventValidator.validate_event(request_data)
                 
@@ -114,13 +118,15 @@ class EventControler(Resource):
     
             _eventService.addEvent(event)
             return jsonify({'events': _eventService.findAllEvents()})
+        except DateNotFoundException as exc:
+            return Response(exc.message, status=404)
         except ValidationError as error:
             # Форматирование ошибки валидации для включения названий полей
             error_details = [format_validation_error(error) for e in error.context] or [format_validation_error(error)]
-            logger.error(f'{request_data}\n Произошла ошибка ввода. Подробности: {error_details}')
+            # logger.error(f'{request_data}\n Произошла ошибка ввода. Подробности: {error_details}')
             return Response(f'Ошибка ввода\nОшибка в поле {error_details[0]["field"]}\n Подробности: {error_details[0]["message"]}')
         except EventDuplicateException as exp:
-            logger.error(f"{request_data}\nПроизошла ошибка при добавлении мероприятия. Подробности: {exp}")
+            # logger.error(f"{request_data}\nПроизошла ошибка при добавлении мероприятия. Подробности: {exp}")
             return Response(exp.message, status=409)
     
     
