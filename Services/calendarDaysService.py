@@ -10,8 +10,6 @@ con = sqlite3.connect('db.db', check_same_thread=False)
 
 class CalendarDayService:
     def findCalendarDay(self, id):
-        if id <= 0:
-            raise CalendarDayIdException('id должен быть больше 0')
         """
         Параметры: id нужного дня
         Возвращает: данные о дне с введенным id (формат: json)

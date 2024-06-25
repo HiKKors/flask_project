@@ -3,15 +3,12 @@ from Models.Event import Event
 
 from Exceptions.event_not_found_exception import EventNotFoundException
 from Exceptions.event_duplicate_exception import EventDuplicateException
-from Exceptions.EventIdException import EventIdException
-from Exceptions.date_not_found_exception import DateNotFoundException
+from Exceptions.IncorrectIdException import IncorrectIdException
 
 con = sqlite3.connect('db.db', check_same_thread=False)
 
 class EventService:
-    def findEvent(self, id):
-        if id <= 0:
-            raise EventIdException('id должен быть больше 0')
+    def findEvent(self, id):  
         """
         Параметры: id нужного мероприятия
         Возвращает: мероприятие с введенным id (формат: json)
@@ -22,11 +19,6 @@ class EventService:
                         id,
                         eventName,
                         description,
-                        location,
-                        DateId,
-                        startTime,
-                        endTime,
-                        program,
                         invitees
                         FROM event
                         WHERE id = ?"""
@@ -42,12 +34,7 @@ class EventService:
             event.id = raw_event[0]
             event.eventName = raw_event[1]
             event.description = raw_event[2]
-            event.location = raw_event[3]
-            event.DateId = raw_event[4]
-            event.startTime = raw_event[5]
-            event.endTime = raw_event[6]
-            event.program = raw_event[7]
-            event.invitees = raw_event[8]
+            event.invitees = raw_event[3]
     
         return event
         
@@ -67,11 +54,6 @@ class EventService:
                         id,
                         eventName,
                         description,
-                        location,
-                        DateId,
-                        startTime,
-                        endTime,
-                        program,
                         invitees
                         FROM event"""
             
@@ -82,12 +64,7 @@ class EventService:
                     'id': row[0],
                     'eventName': row[1],
                     'description': row[2],
-                    'location': row[3],
-                    'DateId': row[4],
-                    'startTime': row[5],
-                    'endTime': row[6],
-                    'program': row[7],
-                    'invitees': row[8]
+                    'invitees': row[3]
                 }
                 events.append(event)
         
@@ -95,27 +72,13 @@ class EventService:
     
     def addEvent(self, event_object: Event):        
         """Параметры: ожидаемый тип данных"""
-        date_id = event_object.DateId
         with con:
-            sql_find_date = """SELECT * FROM calendarDay
-            WHERE id = ?"""
-            dateResult = con.execute(sql_find_date, (date_id,)).fetchone()
-            
-            if dateResult == None:
-                raise DateNotFoundException(f'День с id {date_id} не найден')
-                
-            
             sql_select = """SELECT * FROM event
-            WHERE eventName = ? AND description = ? AND location = ? AND DateId = ? AND startTime = ? AND endTime = ? AND program = ? AND invitees = ?"""
+            WHERE eventName = ? AND description = ? AND invitees = ?"""
             
             searchResult = con.execute(sql_select, (
                 event_object.eventName,
                 event_object.description,
-                event_object.location,
-                event_object.DateId,
-                event_object.startTime,
-                event_object.endTime,
-                event_object.program,
                 event_object.invitees
             )).fetchone()
             
@@ -124,34 +87,18 @@ class EventService:
             
             sql_insert = """
             INSERT INTO event
-            (eventName, description, location, DateId, startTime, endTime, program, invitees)
-            values(?, ?, ?, ?, ?, ?, ?, ?)"""
+            (eventName, description, invitees)
+            values(?, ?, ?)"""
             raw_event = con.execute(sql_insert, (
                 event_object.eventName,
                 event_object.description,
-                event_object.location,
-                event_object.DateId,
-                event_object.startTime,
-                event_object.endTime,
-                event_object.program,
                 event_object.invitees
             ))
             
-            print('НОВЫЙ ОБЪЕКТ:',raw_event)
-            con.execute(sql_insert, (
-                event_object.eventName,
-                event_object.description,
-                event_object.location,
-                event_object.DateId,
-                event_object.startTime,
-                event_object.endTime,
-                event_object.program,
-                event_object.invitees
-            ))
             
     def deleteEvent(self, id):
         if id <= 0:
-            raise EventIdException('id должен быть больше 0')
+            raise IncorrectIdException('id должен быть больше 0')
         """
         Параметры: id мероприятия, которое хотим удалить
         Возвращает: id удаленного мероприятия
@@ -177,20 +124,15 @@ class EventService:
     
     def updateEvent(self, id, event_object: Event):
         if id <= 0:
-            raise EventIdException('id должен быть больше 0')
+            raise IncorrectIdException('id должен быть больше 0')
         """в con.execute кроме всех полей прописываем id, так как для изменения записи нужны все поля"""
         with con:
             sql_select = """SELECT * FROM event
-            WhERE eventName = ? AND description = ? AND location = ? AND DateId = ? AND startTime = ? AND endTime = ? AND program = ? AND invitees = ?"""
+            WhERE eventName = ? AND description = ? AND invitees = ?"""
             
             searchResult = con.execute(sql_select, (
                 event_object.eventName,
                 event_object.description,
-                event_object.location,
-                event_object.DateId,
-                event_object.startTime,
-                event_object.endTime,
-                event_object.program,
                 event_object.invitees
             )).fetchone()
             
@@ -206,11 +148,6 @@ class EventService:
             SET
                 eventName = ?,
                 description = ?,
-                location = ?,
-                DateId = ?,
-                startTime = ?,
-                endTime = ?,
-                program = ?,
                 invitees = ?
             WHERE
                 id = ?
@@ -219,11 +156,6 @@ class EventService:
             con.execute(sql_update, (
                 event_object.eventName,
                 event_object.description,
-                event_object.location,
-                event_object.DateId,
-                event_object.startTime,
-                event_object.endTime,
-                event_object.program,
                 event_object.invitees,
                 id
             ))

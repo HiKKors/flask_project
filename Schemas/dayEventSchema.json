@@ -1,0 +1,12 @@
+{
+    "type": "object",
+    "properties": {
+        "DayId": {"type": "integer"},
+        "EventId": {"type": "integer"},
+        "location": {"type": "string"},
+        "startTime": {"type": "string", "format": "time"},
+        "endTime": {"type": "string", "format": "time"},
+        "program": {"type": "string"}
+    },
+    "required": ["DayId", "EventId", "location", "startTime", "endTime", "program"]
+  }

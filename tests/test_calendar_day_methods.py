@@ -42,7 +42,7 @@ def test_gen_one_day_correct_2():
                                WeekDay='Четверг',
                                DayType='Будний')
     
-    res_day = calendarDay_service.findCalendarDay(id=2)
+    res_day = calendarDay_service.findCalendarDay(id=3)
     
     assert (
         res_day.Date == calendarDay.Date
